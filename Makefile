@@ -11,7 +11,7 @@
 # Use camlp5 for versions of OCaml >= 3.10
 # Download this from http://pauillac.inria.fr/~ddr/camlp5/
 
-USE_CAMLP5=test `ocamlc -version | cut -c3` != "0"
+USE_CAMLP5=test `ocamlc -version | cut -c3` != "0" -o `ocamlc -version | cut -c1` == 4
 
 MLFILES = initialization.ml lib.ml intro.ml formulas.ml prop.ml propexamples.ml           \
           defcnf.ml dp.ml stal.ml bdd.ml fol.ml skolem.ml               \
