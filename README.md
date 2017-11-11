@@ -1,6 +1,6 @@
 ### About ###
-Objective Caml code supporting John Harrison's logic [textbook](http://www.cambridge.org/catalogue/catalogue.asp?isbn=9780521899574) Handbook of Practical Logic and Automated Reasoning to Scala.
-The original code work with OCaml 3.x.
+Objective Caml code supporting John Harrison's logic [textbook](http://www.cambridge.org/catalogue/catalogue.asp?isbn=9780521899574) Handbook of Practical Logic and Automated Reasoning.  
+The original code work with OCaml 3.x.  
 This repo contains sligth modifications and instructions to fit OCaml 4.
 
 ### OCaml 4 ###
@@ -11,4 +11,7 @@ You need to : `opam install num`
 
 ### Notes ###
 
-`make compiled`generate an executable binary named example  
+`make compiled` generate an executable binary named example 
+
+
+  
