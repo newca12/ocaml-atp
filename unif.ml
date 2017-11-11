@@ -6,8 +6,8 @@
 
 let rec istriv env x t =
   match t with
-    Var y -> y = x or defined env y & istriv env x (apply env y)
-  | Fn(f,args) -> exists (istriv env x) args & failwith "cyclic";;
+    Var y -> y = x || defined env y && istriv env x (apply env y)
+  | Fn(f,args) -> exists (istriv env x) args && failwith "cyclic";;
 
 (* ------------------------------------------------------------------------- *)
 (* Main unification procedure                                                *)
@@ -17,7 +17,7 @@ let rec unify env eqs =
   match eqs with
     [] -> env
   | (Fn(f,fargs),Fn(g,gargs))::oth ->
-        if f = g & length fargs = length gargs
+        if f = g && length fargs = length gargs
         then unify env (zip fargs gargs @ oth)
         else failwith "impossible unification"
   | (Var x,t)::oth | (t,Var x)::oth ->

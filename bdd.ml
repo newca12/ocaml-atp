@@ -56,7 +56,7 @@ let mk_bdd ord = Bdd((undefined,undefined,2),ord);;
 (* Extract the ordering field of a BDD.                                      *)
 (* ------------------------------------------------------------------------- *)
 
-let order (Bdd(_,ord)) p1 p2 = (p2 = P"" & p1 <> P"") or ord p1 p2;;
+let order (Bdd(_,ord)) p1 p2 = (p2 = P"" && p1 <> P"") || ord p1 p2;;
 
 (* ------------------------------------------------------------------------- *)
 (* Threading state through.                                                  *)
@@ -70,7 +70,7 @@ let thread s g (f1,x1) (f2,x2) =
 (* ------------------------------------------------------------------------- *)
 
 let rec bdd_and (bdd,comp as bddcomp) (m1,m2) =
-  if m1 = -1 or m2 = -1 then bddcomp,-1
+  if m1 = -1 || m2 = -1 then bddcomp,-1
   else if m1 = 1 then bddcomp,m2 else if m2 = 1 then bddcomp,m1 else
   try bddcomp,apply comp (m1,m2) with Failure _ ->
   try  bddcomp,apply comp (m2,m1) with Failure _ ->

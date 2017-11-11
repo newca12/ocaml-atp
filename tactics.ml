@@ -77,7 +77,7 @@ let gen_right_alpha y x th =
 (* ------------------------------------------------------------------------- *)
 
 let forall_intro_tac y (Goals((asl,(Forall(x,p) as fm))::gls,jfn)) =
-  if mem y (fv fm) or exists (mem y ** fv ** snd) asl
+  if mem y (fv fm) || exists (mem y ** fv ** snd) asl
   then failwith "fix: variable already free in goal" else
   Goals((asl,subst(x |=> Var y) p)::gls,
         jmodify jfn (gen_right_alpha y x));;

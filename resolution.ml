@@ -41,7 +41,7 @@ let rename pfx cls =
 let resolvents cl1 cl2 p acc =
   let ps2 = filter (unifiable(negate p)) cl2 in
   if ps2 = [] then acc else
-  let ps1 = filter (fun q -> q <> p & unifiable p q) cl1 in
+  let ps1 = filter (fun q -> q <> p && unifiable p q) cl1 in
   let pairs = allpairs (fun s1 s2 -> s1,s2)
                        (map (fun pl -> p::pl) (allsubsets ps1))
                        (allnonemptysubsets ps2) in
@@ -93,7 +93,7 @@ END_INTERACTIVE;;
 let rec term_match env eqs =
   match eqs with
     [] -> env
-  | (Fn(f,fa),Fn(g,ga))::oth when f = g & length fa = length ga ->
+  | (Fn(f,fa),Fn(g,ga))::oth when f = g && length fa = length ga ->
         term_match env (zip fa ga @ oth)
   | (Var x,t)::oth ->
         if not (defined env x) then term_match ((x |-> t) env) oth
@@ -131,7 +131,7 @@ let rec replace cl lis =
               else c::(replace cl cls);;
 
 let incorporate gcl cl unused =
-  if trivial cl or
+  if trivial cl ||
      exists (fun c -> subsumes_clause c cl) (gcl::unused)
   then unused else replace cl unused;;
 
@@ -169,7 +169,7 @@ END_INTERACTIVE;;
 (* ------------------------------------------------------------------------- *)
 
 let presolve_clauses cls1 cls2 =
-  if forall positive cls1 or forall positive cls2
+  if forall positive cls1 || forall positive cls2
   then resolve_clauses cls1 cls2 else [];;
 
 let rec presloop (used,unused) =

@@ -62,7 +62,7 @@ let normalize_and_orient ord eqs (Atom(R("=",[s;t]))) =
 (* ------------------------------------------------------------------------- *)
 
 let status(eqs,def,crs) eqs0 =
-  if eqs = eqs0 & (length crs) mod 1000 <> 0 then () else
+  if eqs = eqs0 && (length crs) mod 1000 <> 0 then () else
   (print_string(string_of_int(length eqs)^" equations and "^
                 string_of_int(length crs)^" pending critical pairs + "^
                 string_of_int(length def)^" deferred");

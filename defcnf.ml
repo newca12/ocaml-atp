@@ -40,7 +40,7 @@ let max_varindex pfx =
   let m = String.length pfx in
   fun s n ->
     let l = String.length s in
-    if l <= m or String.sub s 0 m <> pfx then n else
+    if l <= m || String.sub s 0 m <> pfx then n else
     let s' = String.sub s m (l - m) in
     if forall numeric (explode s') then max_num n (num_of_string s')
     else n;;

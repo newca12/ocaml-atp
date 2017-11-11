@@ -149,15 +149,15 @@ let rec dholds v fm =
   | Atom(R("<",[s;t])) -> dtermval v s </ dtermval v t
   | Atom(R("<=",[s;t])) -> dtermval v s <=/ dtermval v t
   | Not(p) -> not(dholds v p)
-  | And(p,q) -> dholds v p & dholds v q
-  | Or(p,q) -> dholds v p or dholds v q
-  | Imp(p,q) -> not(dholds v p) or dholds v q
+  | And(p,q) -> dholds v p && dholds v q
+  | Or(p,q) -> dholds v p || dholds v q
+  | Imp(p,q) -> not(dholds v p) || dholds v q
   | Iff(p,q) -> dholds v p = dholds v q
   | Forall(x,Imp(Atom(R(a,[Var y;t])),p)) -> dhquant forall v x y a t p
   | Exists(x,And(Atom(R(a,[Var y;t])),p)) -> dhquant exists v x y a t p
   | _ -> failwith "dholds: not an arithmetical delta-formula"
 and dhquant pred v x y a t p =
-  if x <> y or mem x (fvt t) then failwith "dholds: not delta" else
+  if x <> y || mem x (fvt t) then failwith "dholds: not delta" else
   let m = if a = "<" then dtermval v t -/ Int 1 else dtermval v t in
   pred (fun n -> dholds ((x |-> n) v) p) (Int 0 --- m);;
 
@@ -186,15 +186,15 @@ let rec classify c n fm =
   match fm with
     False | True | Atom(_) -> true
   | Not p -> classify (opp c) n p
-  | And(p,q) | Or(p,q) -> classify c n p & classify c n q
-  | Imp(p,q) -> classify (opp c) n p & classify c n q
-  | Iff(p,q) -> classify Delta n p & classify Delta n q
-  | Exists(x,p) when n <> 0 & c = Sigma -> classify c n p
-  | Forall(x,p) when n <> 0 & c = Pi -> classify c n p
+  | And(p,q) | Or(p,q) -> classify c n p && classify c n q
+  | Imp(p,q) -> classify (opp c) n p && classify c n q
+  | Iff(p,q) -> classify Delta n p && classify Delta n q
+  | Exists(x,p) when n <> 0 && c = Sigma -> classify c n p
+  | Forall(x,p) when n <> 0 && c = Pi -> classify c n p
   | (Exists(x,And(Atom(R(("<"|"<="),[Var y;t])),p))|
      Forall(x,Imp(Atom(R(("<"|"<="),[Var y;t])),p)))
-       when x = y & not(mem x (fvt t)) -> classify c n p
-  | Exists(x,p) |  Forall(x,p) -> n <> 0 & classify (opp c) (n - 1) fm;;
+       when x = y && not(mem x (fvt t)) -> classify c n p
+  | Exists(x,p) |  Forall(x,p) -> n <> 0 && classify (opp c) (n - 1) fm;;
 
 (* ------------------------------------------------------------------------- *)
 (* Example.                                                                  *)
@@ -219,8 +219,8 @@ let rec veref sign m v fm =
   | Atom(R("<",[s;t])) -> sign(dtermval v s </ dtermval v t)
   | Atom(R("<=",[s;t])) -> sign(dtermval v s <=/ dtermval v t)
   | Not(p) -> veref (not ** sign) m v p
-  | And(p,q) -> sign(sign(veref sign m v p) & sign(veref sign m v q))
-  | Or(p,q) -> sign(sign(veref sign m v p) or sign(veref sign m v q))
+  | And(p,q) -> sign(sign(veref sign m v p) && sign(veref sign m v q))
+  | Or(p,q) -> sign(sign(veref sign m v p) || sign(veref sign m v q))
   | Imp(p,q) -> veref sign m v (Or(Not p,q))
   | Iff(p,q) -> veref sign m v (And(Imp(p,q),Imp(q,p)))
   | Exists(x,p) when sign true
@@ -233,7 +233,7 @@ let rec veref sign m v fm =
         -> verefboundquant m v x y a t sign p
 
 and verefboundquant m v x y a t sign p =
-  if x <> y or mem x (fvt t) then failwith "veref" else
+  if x <> y || mem x (fvt t) then failwith "veref" else
   let m = if a = "<" then dtermval v t -/ Int 1 else dtermval v t in
   forall (fun n -> veref sign m ((x |-> n) v) p) (Int 0 --- m);;
 
@@ -663,7 +663,7 @@ let rec sigma_prove fm =
         let th = sigma_prove (Imp(consequent(concl ith),False)) in
         imp_swap(imp_trans ith (imp_swap th))
   | Forall(x,Imp(Atom(R(("<="|"<" as a),[Var x';t])),q))
-        when x' = x & not(occurs_in (Var x) t) -> bounded_prove(a,x,t,q)
+        when x' = x && not(occurs_in (Var x) t) -> bounded_prove(a,x,t,q)
   | _ -> let th = sigma_elim fm in
          right_mp th (sigma_prove (antecedent(consequent(concl th))))
 

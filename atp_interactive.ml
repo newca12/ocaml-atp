@@ -113,12 +113,12 @@ let rec zip l1 l2 =
 let rec forall p l =
   match l with
     [] -> true
-  | h::t -> p(h) & forall p t;;
+  | h::t -> p(h) && forall p t;;
 
 let rec exists p l =
   match l with
     [] -> false
-  | h::t -> p(h) or exists p t;;
+  | h::t -> p(h) || exists p t;;
 
 let partition p l =
     itlist (fun a (yes,no) -> if p a then a::yes,no else yes,a::no) l ([],[]);;
@@ -183,7 +183,7 @@ let rec insertat i x l =
 let rec forall2 p l1 l2 =
   match (l1,l2) with
     [],[] -> true
-  | (h1::t1,h2::t2) -> p h1 h2 & forall2 p t1 t2
+  | (h1::t1,h2::t2) -> p h1 h2 && forall2 p t1 t2
   | _ -> false;;
 
 let index x =
@@ -205,8 +205,8 @@ let rec unzip l =
 
 let rec earlier l x y =
   match l with
-    h::t -> (Pervasives.compare h y <> 0) &
-            (Pervasives.compare h x = 0 or earlier t x y)
+    h::t -> (Pervasives.compare h y <> 0) &&
+            (Pervasives.compare h x = 0 || earlier t x y)
   | [] -> false;;
 
 (* ------------------------------------------------------------------------- *)
@@ -313,7 +313,7 @@ let maximize f l = optimize (>) f l and minimize f l = optimize (<) f l;;
 let setify =
   let rec canonical lis =
      match lis with
-       x::(y::_ as rest) -> Pervasives.compare x y < 0 & canonical rest
+       x::(y::_ as rest) -> Pervasives.compare x y < 0 && canonical rest
      | _ -> true in
   fun l -> if canonical l then l
            else uniq (sort (fun x y -> Pervasives.compare x y <= 0) l);;
@@ -390,7 +390,7 @@ let unions s = setify(itlist (@) s []);;
 let rec mem x lis =
   match lis with
     [] -> false
-  | (h::t) -> Pervasives.compare x h = 0 or mem x t;;
+  | (h::t) -> Pervasives.compare x h = 0 || mem x t;;
 
 (* ------------------------------------------------------------------------- *)
 (* Finding all subsets or all subsets of a given size.                       *)
@@ -968,7 +968,7 @@ type ('a)formula = False
 
 let rec parse_ginfix opsym opupdate sof subparser inp =
   let e1,inp1 = subparser inp in
-  if inp1 <> [] & hd inp1 = opsym then
+  if inp1 <> [] && hd inp1 = opsym then
      parse_ginfix opsym opupdate (opupdate sof e1) subparser (tl inp1)
   else sof e1,inp1;;
 
@@ -987,7 +987,7 @@ let parse_list opsym =
 
 let papply f (ast,rest) = (f ast,rest);;
 
-let nextin inp tok = inp <> [] & hd inp = tok;;
+let nextin inp tok = inp <> [] && hd inp = tok;;
 
 let parse_bracketed subparser cbra inp =
   let ast,rest = subparser inp in
@@ -1201,9 +1201,9 @@ let rec eval fm v =
   | True -> true
   | Atom(x) -> v(x)
   | Not(p) -> not(eval p v)
-  | And(p,q) -> (eval p v) & (eval q v)
-  | Or(p,q) -> (eval p v) or (eval q v)
-  | Imp(p,q) -> not(eval p v) or (eval q v)
+  | And(p,q) -> (eval p v) && (eval q v)
+  | Or(p,q) -> (eval p v) || (eval q v)
+  | Imp(p,q) -> not(eval p v) || (eval q v)
   | Iff(p,q) -> (eval p v) = (eval q v);;
 
 (* ------------------------------------------------------------------------- *)
@@ -1240,7 +1240,7 @@ let rec onallvaluations subfn v ats =
   match ats with
     [] -> subfn v
   | p::ps -> let v' t q = if q = p then t else v(q) in
-             onallvaluations subfn (v' false) ps &
+             onallvaluations subfn (v' false) ps &&
              onallvaluations subfn (v' true) ps;;
 
 let print_truthtable fm =
@@ -1862,7 +1862,7 @@ let max_varindex pfx =
   let m = String.length pfx in
   fun s n ->
     let l = String.length s in
-    if l <= m or String.sub s 0 m <> pfx then n else
+    if l <= m || String.sub s 0 m <> pfx then n else
     let s' = String.sub s m (l - m) in
     if forall numeric (explode s') then max_num n (num_of_string s')
     else n;;
@@ -2013,7 +2013,7 @@ let rec dpll clauses =
   try dpll(affirmative_negative_rule clauses) with Failure _ ->
   let pvs = filter positive (unions clauses) in
   let p = maximize (posneg_count clauses) pvs in
-  dpll (insert [p] clauses) or dpll (insert [negate p] clauses);;
+  dpll (insert [p] clauses) || dpll (insert [negate p] clauses);;
                                                      
 let dpllsat fm = dpll(defcnfs fm);;
 
@@ -2290,7 +2290,7 @@ let stal_intersect (eq1,_ as erf1) (eq2,_ as erf2) erf =
 
 let rec saturate n erf assigs allvars =
   let (eqv',_ as erf') = zero_saturate_and_check erf assigs in
-  if n = 0 or truefalse eqv' then erf' else
+  if n = 0 || truefalse eqv' then erf' else
   let (eqv'',_ as erf'') = splits n erf' allvars allvars in
   if eqv'' = eqv' then erf'' else saturate n erf'' [] allvars
 
@@ -2313,7 +2313,7 @@ let rec saturate_upto vars n m trigs assigs =
    (print_string("*** Starting "^(string_of_int n)^"-saturation");
     print_newline();
     let (eqv,_) = saturate n (unequal,relevance trigs) assigs vars in
-    truefalse eqv or saturate_upto vars (n + 1) m trigs assigs);;
+    truefalse eqv || saturate_upto vars (n + 1) m trigs assigs);;
 
 (* ------------------------------------------------------------------------- *)
 (* Overall function.                                                         *)
@@ -2394,7 +2394,7 @@ let mk_bdd ord = Bdd((undefined,undefined,2),ord);;
 (* Extract the ordering field of a BDD.                                      *)
 (* ------------------------------------------------------------------------- *)
 
-let order (Bdd(_,ord)) p1 p2 = (p2 = P"" & p1 <> P"") or ord p1 p2;;
+let order (Bdd(_,ord)) p1 p2 = (p2 = P"" && p1 <> P"") || ord p1 p2;;
 
 (* ------------------------------------------------------------------------- *)
 (* Threading state through.                                                  *)
@@ -2408,7 +2408,7 @@ let thread s g (f1,x1) (f2,x2) =
 (* ------------------------------------------------------------------------- *)
 
 let rec bdd_and (bdd,comp as bddcomp) (m1,m2) =
-  if m1 = -1 or m2 = -1 then bddcomp,-1
+  if m1 = -1 || m2 = -1 then bddcomp,-1
   else if m1 = 1 then bddcomp,m2 else if m2 = 1 then bddcomp,m1 else
   try bddcomp,apply comp (m1,m2) with Failure _ ->
   try  bddcomp,apply comp (m2,m1) with Failure _ ->
@@ -2571,7 +2571,7 @@ Atom(R("<",[Fn("+",[Var "x"; Var "y"]); Var "z"]));;
 (* Parsing of terms.                                                         *)
 (* ------------------------------------------------------------------------- *)
 
-let is_const_name s = forall numeric (explode s) or s = "nil";;
+let is_const_name s = forall numeric (explode s) || s = "nil";;
 
 let rec parse_atomic_term vs inp =
   match inp with
@@ -2583,7 +2583,7 @@ let rec parse_atomic_term vs inp =
       papply (fun args -> Fn(f,args))
              (parse_bracketed (parse_list "," (parse_term vs)) ")" rest)
   | a::rest ->
-      (if is_const_name a & not(mem a vs) then Fn(a,[]) else Var a),rest
+      (if is_const_name a && not(mem a vs) then Fn(a,[]) else Var a),rest
 
 and parse_term vs inp =
   parse_right_infix "::" (fun (e1,e2) -> Fn("::",[e1;e2]))
@@ -2684,7 +2684,7 @@ let printert tm =
 (* ------------------------------------------------------------------------- *)
 
 let print_atom prec (R(p,args)) =
-  if mem p ["="; "<"; "<="; ">"; ">="] & length args = 2
+  if mem p ["="; "<"; "<="; ">"; ">="] && length args = 2
   then print_infix_term false 12 12 (" "^p) (el 0 args) (el 1 args)
   else print_fargs p args;;
 
@@ -2717,9 +2717,9 @@ let rec holds (domain,func,pred as m) v fm =
   | True -> true
   | Atom(R(r,args)) -> pred r (map (termval m v) args)
   | Not(p) -> not(holds m v p)
-  | And(p,q) -> (holds m v p) & (holds m v q)
-  | Or(p,q) -> (holds m v p) or (holds m v q)
-  | Imp(p,q) -> not(holds m v p) or (holds m v q)
+  | And(p,q) -> (holds m v p) && (holds m v q)
+  | Or(p,q) -> (holds m v p) || (holds m v q)
+  | Imp(p,q) -> not(holds m v p) || (holds m v q)
   | Iff(p,q) -> (holds m v p = holds m v q)
   | Forall(x,p) -> forall (fun a -> holds m ((x |-> a) v) p) domain
   | Exists(x,p) -> exists (fun a -> holds m ((x |-> a) v) p) domain;;
@@ -2734,7 +2734,7 @@ let bool_interp =
       ("0",[]) -> false
     | ("1",[]) -> true
     | ("+",[x;y]) -> not(x = y)
-    | ("*",[x;y]) -> x & y
+    | ("*",[x;y]) -> x && y
     | _ -> failwith "uninterpreted function"
   and pred p args =
     match (p,args) with
@@ -3211,8 +3211,8 @@ let p29 = davisputnam'
 
 let rec istriv env x t =
   match t with
-    Var y -> y = x or defined env y & istriv env x (apply env y)
-  | Fn(f,args) -> exists (istriv env x) args & failwith "cyclic";;
+    Var y -> y = x || defined env y && istriv env x (apply env y)
+  | Fn(f,args) -> exists (istriv env x) args && failwith "cyclic";;
 
 (* ------------------------------------------------------------------------- *)
 (* Main unification procedure                                                *)
@@ -3222,7 +3222,7 @@ let rec unify env eqs =
   match eqs with
     [] -> env
   | (Fn(f,fargs),Fn(g,gargs))::oth ->
-        if f = g & length fargs = length gargs
+        if f = g && length fargs = length gargs
         then unify env (zip fargs gargs @ oth)
         else failwith "impossible unification"
   | (Var x,t)::oth | (t,Var x)::oth ->
@@ -3830,7 +3830,7 @@ let rename pfx cls =
 let resolvents cl1 cl2 p acc =
   let ps2 = filter (unifiable(negate p)) cl2 in
   if ps2 = [] then acc else
-  let ps1 = filter (fun q -> q <> p & unifiable p q) cl1 in
+  let ps1 = filter (fun q -> q <> p && unifiable p q) cl1 in
   let pairs = allpairs (fun s1 s2 -> s1,s2)
                        (map (fun pl -> p::pl) (allsubsets ps1))
                        (allnonemptysubsets ps2) in
@@ -3882,7 +3882,7 @@ let davis_putnam_example = resolution
 let rec term_match env eqs =
   match eqs with
     [] -> env
-  | (Fn(f,fa),Fn(g,ga))::oth when f = g & length fa = length ga ->
+  | (Fn(f,fa),Fn(g,ga))::oth when f = g && length fa = length ga ->
         term_match env (zip fa ga @ oth)
   | (Var x,t)::oth ->
         if not (defined env x) then term_match ((x |-> t) env) oth
@@ -3920,7 +3920,7 @@ let rec replace cl lis =
               else c::(replace cl cls);;
 
 let incorporate gcl cl unused =
-  if trivial cl or
+  if trivial cl ||
      exists (fun c -> subsumes_clause c cl) (gcl::unused)
   then unused else replace cl unused;;
 
@@ -3958,7 +3958,7 @@ let davis_putnam_example = resolution
 (* ------------------------------------------------------------------------- *)
 
 let presolve_clauses cls1 cls2 =
-  if forall positive cls1 or forall positive cls2
+  if forall positive cls1 || forall positive cls2
   then resolve_clauses cls1 cls2 else [];;
 
 let rec presloop (used,unused) =
@@ -4806,7 +4806,7 @@ let parserule s =
   let c,rest =
     parse_formula (parse_infix_atom,parse_atom) [] (lex(explode s)) in
   let asm,rest1 =
-    if rest <> [] & hd rest = ":-"
+    if rest <> [] && hd rest = ":-"
     then parse_list ","
           (parse_formula (parse_infix_atom,parse_atom) []) (tl rest)
     else [],rest in
@@ -5770,7 +5770,7 @@ let rec subterms tm =
 
 let congruent eqv (s,t) =
   match (s,t) with
-    Fn(f,a1),Fn(g,a2) -> f = g & forall2 (equivalent eqv) a1 a2
+    Fn(f,a1),Fn(g,a2) -> f = g && forall2 (equivalent eqv) a1 a2
   | _ -> false;;
 
 (* ------------------------------------------------------------------------- *)
@@ -5919,21 +5919,21 @@ termsize (tsubst i s) > termsize (tsubst i t);;
 let rec lexord ord l1 l2 =
   match (l1,l2) with
     (h1::t1,h2::t2) -> if ord h1 h2 then length t1 = length t2
-                       else h1 = h2 & lexord ord t1 t2
+                       else h1 = h2 && lexord ord t1 t2
   | _ -> false;;
 
 let rec lpo_gt w s t =
   match (s,t) with
     (_,Var x) ->
-        not(s = t) & mem x (fvt s)
+        not(s = t) && mem x (fvt s)
   | (Fn(f,fargs),Fn(g,gargs)) ->
-        exists (fun si -> lpo_ge w si t) fargs or
-        forall (lpo_gt w s) gargs &
-        (f = g & lexord (lpo_gt w) fargs gargs or
+        exists (fun si -> lpo_ge w si t) fargs ||
+        forall (lpo_gt w s) gargs &&
+        (f = g && lexord (lpo_gt w) fargs gargs ||
          w (f,length fargs) (g,length gargs))
   | _ -> false
 
-and lpo_ge w s t = (s = t) or lpo_gt w s t;;
+and lpo_ge w s t = (s = t) || lpo_gt w s t;;
 
 (* ------------------------------------------------------------------------- *)
 (* More convenient way of specifying weightings.                             *)
@@ -6004,7 +6004,7 @@ let normalize_and_orient ord eqs (Atom(R("=",[s;t]))) =
 (* ------------------------------------------------------------------------- *)
 
 let status(eqs,def,crs) eqs0 =
-  if eqs = eqs0 & (length crs) mod 1000 <> 0 then () else
+  if eqs = eqs0 && (length crs) mod 1000 <> 0 then () else
   (print_string(string_of_int(length eqs)^" equations and "^
                 string_of_int(length crs)^" pending critical pairs + "^
                 string_of_int(length def)^" deferred");
@@ -7241,7 +7241,7 @@ decide_fmp
 let decide_monadic fm =
   let funcs = functions fm and preds = predicates fm in
   let monadic,other = partition (fun (_,ar) -> ar = 1) preds in
-  if funcs <> [] or exists (fun (_,ar) -> ar > 1) other
+  if funcs <> [] || exists (fun (_,ar) -> ar > 1) other
   then failwith "Not in the monadic subset" else
   let n = funpow (length monadic) (( * ) 2) 1 in
   decide_finite n fm;;
@@ -8178,7 +8178,7 @@ let assertsign sgns (p,s) =
   let p',swf = monic p in
   let s' = swap swf s in
   let s0 = try assoc p' sgns with Failure _ -> s' in
-  if s' = s0 or s0 = Nonzero & (s' = Positive or s' = Negative)
+  if s' = s0 || s0 = Nonzero && (s' = Positive || s' = Negative)
   then (p',s')::(subtract sgns [p',s0]) else failwith "assertsign";;
 
 (* ------------------------------------------------------------------------- *)
@@ -9087,7 +9087,7 @@ let pdivide_pos vars sgns s p =
   let a = head vars p and (k,r) = pdivide vars s p in
   let sgn = findsign sgns a in
   if sgn = Zero then failwith "pdivide_pos: zero head coefficient"
-  else if sgn = Positive or k mod 2 = 0 then r
+  else if sgn = Positive || k mod 2 = 0 then r
   else if sgn = Negative then poly_neg r else poly_mul vars a r;;
 
 (* ------------------------------------------------------------------------- *)
@@ -9294,7 +9294,7 @@ let mlcm (c1,m1) (c2,m2) = (Int 1,map2 max m1 m2);;
 
 let morder_lt m1 m2 =
   let n1 = itlist (+) m1 0 and n2 = itlist (+) m2 0 in
-  n1 < n2 or n1 = n2 & lexord(>) m1 m2;;
+  n1 < n2 || n1 = n2 && lexord(>) m1 m2;;
 
 (* ------------------------------------------------------------------------- *)
 (* Arithmetic on canonical multivariate polynomials.                         *)
@@ -10191,7 +10191,7 @@ meson(Imp(q,Not c));;
 let real_lang =
   let fn = ["-",1; "+",2; "-",2; "*",2; "^",2]
   and pr = ["<=",2; "<",2; ">=",2; ">",2] in
-  (fun (s,n) -> n = 0 & is_numeral(Fn(s,[])) or mem (s,n) fn),
+  (fun (s,n) -> n = 0 && is_numeral(Fn(s,[])) || mem (s,n) fn),
   (fun sn -> mem sn pr),
   (fun fm -> real_qelim(generalize fm) = True);;
 
@@ -10202,7 +10202,7 @@ let real_lang =
 let int_lang =
   let fn = ["-",1; "+",2; "-",2; "*",2]
   and pr = ["<=",2; "<",2; ">=",2; ">",2] in
-  (fun (s,n) -> n = 0 & is_numeral(Fn(s,[])) or mem (s,n) fn),
+  (fun (s,n) -> n = 0 && is_numeral(Fn(s,[])) || mem (s,n) fn),
   (fun sn -> mem sn pr),
   (fun fm -> integer_qelim(generalize fm) = True);;
 
@@ -10283,7 +10283,7 @@ let homogenize langs fms =
 (* ------------------------------------------------------------------------- *)
 
 let belongs (fn,pr,dp) fm =
-  forall fn (functions fm) &
+  forall fn (functions fm) &&
   forall pr (subtract (predicates fm) ["=",2]);;
 
 (* ------------------------------------------------------------------------- *)
@@ -10599,7 +10599,7 @@ module type Proofsystem =
 (* ------------------------------------------------------------------------- *)
 
 let rec occurs_in s t =
-  s = t or
+  s = t ||
   match t with
     Var y -> false
   | Fn(f,args) -> exists (occurs_in s) args;;
@@ -10609,8 +10609,8 @@ let rec free_in t fm =
     False|True -> false
   | Atom(R(p,args)) -> exists (occurs_in t) args
   | Not(p) -> free_in t p
-  | And(p,q)|Or(p,q)|Imp(p,q)|Iff(p,q) -> free_in t p or free_in t q
-  | Forall(y,p)|Exists(y,p) -> not(occurs_in (Var y) t) & free_in t p;;
+  | And(p,q)|Or(p,q)|Imp(p,q)|Iff(p,q) -> free_in t p || free_in t q
+  | Forall(y,p)|Exists(y,p) -> not(occurs_in (Var y) t) && free_in t p;;
 
 (* ------------------------------------------------------------------------- *)
 (* Implementation of the abstract data type of theorems.                     *)
@@ -11135,9 +11135,9 @@ let eq_trans s t u =
 
 let rec icongruence s t stm ttm =
   if stm = ttm then add_assum (mk_eq s t) (axiom_eqrefl stm)
-  else if stm = s & ttm = t then imp_refl (mk_eq s t) else
+  else if stm = s && ttm = t then imp_refl (mk_eq s t) else
   match (stm,ttm) with
-   (Fn(fs,sa),Fn(ft,ta)) when fs = ft & length sa = length ta ->
+   (Fn(fs,sa),Fn(ft,ta)) when fs = ft && length sa = length ta ->
         let ths = map2 (icongruence s t) sa ta in
         let ts = map (consequent ** concl) ths in
         imp_trans_chain ths (axiom_funcong fs (map lhs ts) (map rhs ts))
@@ -11235,7 +11235,7 @@ let subalpha th =
 let rec isubst s t sfm tfm =
   if sfm = tfm then add_assum (mk_eq s t) (imp_refl tfm) else
   match (sfm,tfm) with
-    Atom(R(p,sa)),Atom(R(p',ta)) when p = p' & length sa = length ta ->
+    Atom(R(p,sa)),Atom(R(p',ta)) when p = p' && length sa = length ta ->
         let ths = map2 (icongruence s t) sa ta in
         let ls,rs = unzip (map (dest_eq ** consequent ** concl) ths) in
         imp_trans_chain ths (axiom_predcong p ls rs)
@@ -12031,7 +12031,7 @@ let gen_right_alpha y x th =
 (* ------------------------------------------------------------------------- *)
 
 let forall_intro_tac y (Goals((asl,(Forall(x,p) as fm))::gls,jfn)) =
-  if mem y (fv fm) or exists (mem y ** fv ** snd) asl
+  if mem y (fv fm) || exists (mem y ** fv ** snd) asl
   then failwith "fix: variable already free in goal" else
   Goals((asl,subst(x |=> Var y) p)::gls,
         jmodify jfn (gen_right_alpha y x));;
@@ -12680,15 +12680,15 @@ let rec dholds v fm =
   | Atom(R("<",[s;t])) -> dtermval v s </ dtermval v t
   | Atom(R("<=",[s;t])) -> dtermval v s <=/ dtermval v t
   | Not(p) -> not(dholds v p)
-  | And(p,q) -> dholds v p & dholds v q
-  | Or(p,q) -> dholds v p or dholds v q
-  | Imp(p,q) -> not(dholds v p) or dholds v q
+  | And(p,q) -> dholds v p && dholds v q
+  | Or(p,q) -> dholds v p || dholds v q
+  | Imp(p,q) -> not(dholds v p) || dholds v q
   | Iff(p,q) -> dholds v p = dholds v q
   | Forall(x,Imp(Atom(R(a,[Var y;t])),p)) -> dhquant forall v x y a t p
   | Exists(x,And(Atom(R(a,[Var y;t])),p)) -> dhquant exists v x y a t p
   | _ -> failwith "dholds: not an arithmetical delta-formula"
 and dhquant pred v x y a t p =
-  if x <> y or mem x (fvt t) then failwith "dholds: not delta" else
+  if x <> y || mem x (fvt t) then failwith "dholds: not delta" else
   let m = if a = "<" then dtermval v t -/ Int 1 else dtermval v t in
   pred (fun n -> dholds ((x |-> n) v) p) (Int 0 --- m);;
 
@@ -12717,15 +12717,15 @@ let rec classify c n fm =
   match fm with
     False | True | Atom(_) -> true
   | Not p -> classify (opp c) n p
-  | And(p,q) | Or(p,q) -> classify c n p & classify c n q
-  | Imp(p,q) -> classify (opp c) n p & classify c n q
-  | Iff(p,q) -> classify Delta n p & classify Delta n q
-  | Exists(x,p) when n <> 0 & c = Sigma -> classify c n p
-  | Forall(x,p) when n <> 0 & c = Pi -> classify c n p
+  | And(p,q) | Or(p,q) -> classify c n p && classify c n q
+  | Imp(p,q) -> classify (opp c) n p && classify c n q
+  | Iff(p,q) -> classify Delta n p && classify Delta n q
+  | Exists(x,p) when n <> 0 && c = Sigma -> classify c n p
+  | Forall(x,p) when n <> 0 && c = Pi -> classify c n p
   | (Exists(x,And(Atom(R(("<"|"<="),[Var y;t])),p))|
      Forall(x,Imp(Atom(R(("<"|"<="),[Var y;t])),p)))
-       when x = y & not(mem x (fvt t)) -> classify c n p
-  | Exists(x,p) |  Forall(x,p) -> n <> 0 & classify (opp c) (n - 1) fm;;
+       when x = y && not(mem x (fvt t)) -> classify c n p
+  | Exists(x,p) |  Forall(x,p) -> n <> 0 && classify (opp c) (n - 1) fm;;
 
 (* ------------------------------------------------------------------------- *)
 (* Example.                                                                  *)
@@ -12750,8 +12750,8 @@ let rec veref sign m v fm =
   | Atom(R("<",[s;t])) -> sign(dtermval v s </ dtermval v t)
   | Atom(R("<=",[s;t])) -> sign(dtermval v s <=/ dtermval v t)
   | Not(p) -> veref (not ** sign) m v p
-  | And(p,q) -> sign(sign(veref sign m v p) & sign(veref sign m v q))
-  | Or(p,q) -> sign(sign(veref sign m v p) or sign(veref sign m v q))
+  | And(p,q) -> sign(sign(veref sign m v p) && sign(veref sign m v q))
+  | Or(p,q) -> sign(sign(veref sign m v p) || sign(veref sign m v q))
   | Imp(p,q) -> veref sign m v (Or(Not p,q))
   | Iff(p,q) -> veref sign m v (And(Imp(p,q),Imp(q,p)))
   | Exists(x,p) when sign true
@@ -12764,7 +12764,7 @@ let rec veref sign m v fm =
         -> verefboundquant m v x y a t sign p
 
 and verefboundquant m v x y a t sign p =
-  if x <> y or mem x (fvt t) then failwith "veref" else
+  if x <> y || mem x (fvt t) then failwith "veref" else
   let m = if a = "<" then dtermval v t -/ Int 1 else dtermval v t in
   forall (fun n -> veref sign m ((x |-> n) v) p) (Int 0 --- m);;
 
@@ -13194,7 +13194,7 @@ let rec sigma_prove fm =
         let th = sigma_prove (Imp(consequent(concl ith),False)) in
         imp_swap(imp_trans ith (imp_swap th))
   | Forall(x,Imp(Atom(R(("<="|"<" as a),[Var x';t])),q))
-        when x' = x & not(occurs_in (Var x) t) -> bounded_prove(a,x,t,q)
+        when x' = x && not(occurs_in (Var x) t) -> bounded_prove(a,x,t,q)
   | _ -> let th = sigma_elim fm in
          right_mp th (sigma_prove (antecedent(consequent(concl th))))
 

@@ -15,7 +15,7 @@ let rec subterms tm =
 
 let congruent eqv (s,t) =
   match (s,t) with
-    Fn(f,a1),Fn(g,a2) -> f = g & forall2 (equivalent eqv) a1 a2
+    Fn(f,a1),Fn(g,a2) -> f = g && forall2 (equivalent eqv) a1 a2
   | _ -> false;;
 
 (* ------------------------------------------------------------------------- *)

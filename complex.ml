@@ -177,7 +177,7 @@ let assertsign sgns (p,s) =
   let p',swf = monic p in
   let s' = swap swf s in
   let s0 = try assoc p' sgns with Failure _ -> s' in
-  if s' = s0 or s0 = Nonzero & (s' = Positive or s' = Negative)
+  if s' = s0 || s0 = Nonzero && (s' = Positive || s' = Negative)
   then (p',s')::(subtract sgns [p',s0]) else failwith "assertsign";;
 
 (* ------------------------------------------------------------------------- *)

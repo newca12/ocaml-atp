@@ -296,7 +296,7 @@ END_INTERACTIVE;;
 let decide_monadic fm =
   let funcs = functions fm and preds = predicates fm in
   let monadic,other = partition (fun (_,ar) -> ar = 1) preds in
-  if funcs <> [] or exists (fun (_,ar) -> ar > 1) other
+  if funcs <> [] || exists (fun (_,ar) -> ar > 1) other
   then failwith "Not in the monadic subset" else
   let n = funpow (length monadic) (( * ) 2) 1 in
   decide_finite n fm;;

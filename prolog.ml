@@ -66,7 +66,7 @@ let parserule s =
   let c,rest =
     parse_formula (parse_infix_atom,parse_atom) [] (lex(explode s)) in
   let asm,rest1 =
-    if rest <> [] & hd rest = ":-"
+    if rest <> [] && hd rest = ":-"
     then parse_list ","
           (parse_formula (parse_infix_atom,parse_atom) []) (tl rest)
     else [],rest in

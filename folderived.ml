@@ -31,9 +31,9 @@ let eq_trans s t u =
 
 let rec icongruence s t stm ttm =
   if stm = ttm then add_assum (mk_eq s t) (axiom_eqrefl stm)
-  else if stm = s & ttm = t then imp_refl (mk_eq s t) else
+  else if stm = s && ttm = t then imp_refl (mk_eq s t) else
   match (stm,ttm) with
-   (Fn(fs,sa),Fn(ft,ta)) when fs = ft & length sa = length ta ->
+   (Fn(fs,sa),Fn(ft,ta)) when fs = ft && length sa = length ta ->
         let ths = map2 (icongruence s t) sa ta in
         let ts = map (consequent ** concl) ths in
         imp_trans_chain ths (axiom_funcong fs (map lhs ts) (map rhs ts))
@@ -131,7 +131,7 @@ let subalpha th =
 let rec isubst s t sfm tfm =
   if sfm = tfm then add_assum (mk_eq s t) (imp_refl tfm) else
   match (sfm,tfm) with
-    Atom(R(p,sa)),Atom(R(p',ta)) when p = p' & length sa = length ta ->
+    Atom(R(p,sa)),Atom(R(p',ta)) when p = p' && length sa = length ta ->
         let ths = map2 (icongruence s t) sa ta in
         let ls,rs = unzip (map (dest_eq ** consequent ** concl) ths) in
         imp_trans_chain ths (axiom_predcong p ls rs)

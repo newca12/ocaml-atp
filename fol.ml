@@ -45,7 +45,7 @@ END_INTERACTIVE;;
 (* Parsing of terms.                                                         *)
 (* ------------------------------------------------------------------------- *)
 
-let is_const_name s = forall numeric (explode s) or s = "nil";;
+let is_const_name s = forall numeric (explode s) || s = "nil";;
 
 let rec parse_atomic_term vs inp =
   match inp with
@@ -57,7 +57,7 @@ let rec parse_atomic_term vs inp =
       papply (fun args -> Fn(f,args))
              (parse_bracketed (parse_list "," (parse_term vs)) ")" rest)
   | a::rest ->
-      (if is_const_name a & not(mem a vs) then Fn(a,[]) else Var a),rest
+      (if is_const_name a && not(mem a vs) then Fn(a,[]) else Var a),rest
 
 and parse_term vs inp =
   parse_right_infix "::" (fun (e1,e2) -> Fn("::",[e1;e2]))
@@ -158,7 +158,7 @@ let printert tm =
 (* ------------------------------------------------------------------------- *)
 
 let print_atom prec (R(p,args)) =
-  if mem p ["="; "<"; "<="; ">"; ">="] & length args = 2
+  if mem p ["="; "<"; "<="; ">"; ">="] && length args = 2
   then print_infix_term false 12 12 (" "^p) (el 0 args) (el 1 args)
   else print_fargs p args;;
 
@@ -191,9 +191,9 @@ let rec holds (domain,func,pred as m) v fm =
   | True -> true
   | Atom(R(r,args)) -> pred r (map (termval m v) args)
   | Not(p) -> not(holds m v p)
-  | And(p,q) -> (holds m v p) & (holds m v q)
-  | Or(p,q) -> (holds m v p) or (holds m v q)
-  | Imp(p,q) -> not(holds m v p) or (holds m v q)
+  | And(p,q) -> (holds m v p) && (holds m v q)
+  | Or(p,q) -> (holds m v p) || (holds m v q)
+  | Imp(p,q) -> not(holds m v p) || (holds m v q)
   | Iff(p,q) -> (holds m v p = holds m v q)
   | Forall(x,p) -> forall (fun a -> holds m ((x |-> a) v) p) domain
   | Exists(x,p) -> exists (fun a -> holds m ((x |-> a) v) p) domain;;
@@ -208,7 +208,7 @@ let bool_interp =
       ("0",[]) -> false
     | ("1",[]) -> true
     | ("+",[x;y]) -> not(x = y)
-    | ("*",[x;y]) -> x & y
+    | ("*",[x;y]) -> x && y
     | _ -> failwith "uninterpreted function"
   and pred p args =
     match (p,args) with

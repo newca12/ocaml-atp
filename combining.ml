@@ -11,7 +11,7 @@
 let real_lang =
   let fn = ["-",1; "+",2; "-",2; "*",2; "^",2]
   and pr = ["<=",2; "<",2; ">=",2; ">",2] in
-  (fun (s,n) -> n = 0 & is_numeral(Fn(s,[])) or mem (s,n) fn),
+  (fun (s,n) -> n = 0 && is_numeral(Fn(s,[])) || mem (s,n) fn),
   (fun sn -> mem sn pr),
   (fun fm -> real_qelim(generalize fm) = True);;
 
@@ -22,7 +22,7 @@ let real_lang =
 let int_lang =
   let fn = ["-",1; "+",2; "-",2; "*",2]
   and pr = ["<=",2; "<",2; ">=",2; ">",2] in
-  (fun (s,n) -> n = 0 & is_numeral(Fn(s,[])) or mem (s,n) fn),
+  (fun (s,n) -> n = 0 && is_numeral(Fn(s,[])) || mem (s,n) fn),
   (fun sn -> mem sn pr),
   (fun fm -> integer_qelim(generalize fm) = True);;
 
@@ -103,7 +103,7 @@ let homogenize langs fms =
 (* ------------------------------------------------------------------------- *)
 
 let belongs (fn,pr,dp) fm =
-  forall fn (functions fm) &
+  forall fn (functions fm) &&
   forall pr (subtract (predicates fm) ["=",2]);;
 
 (* ------------------------------------------------------------------------- *)

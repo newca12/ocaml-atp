@@ -22,7 +22,7 @@ let mlcm (c1,m1) (c2,m2) = (Int 1,map2 max m1 m2);;
 
 let morder_lt m1 m2 =
   let n1 = itlist (+) m1 0 and n2 = itlist (+) m2 0 in
-  n1 < n2 or n1 = n2 & lexord(>) m1 m2;;
+  n1 < n2 || n1 = n2 && lexord(>) m1 m2;;
 
 (* ------------------------------------------------------------------------- *)
 (* Arithmetic on canonical multivariate polynomials.                         *)

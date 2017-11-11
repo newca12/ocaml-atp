@@ -83,7 +83,7 @@ let rec dpll clauses =
   try dpll(affirmative_negative_rule clauses) with Failure _ ->
   let pvs = filter positive (unions clauses) in
   let p = maximize (posneg_count clauses) pvs in
-  dpll (insert [p] clauses) or dpll (insert [negate p] clauses);;
+  dpll (insert [p] clauses) || dpll (insert [negate p] clauses);;
                                                      
 let dpllsat fm = dpll(defcnfs fm);;
 

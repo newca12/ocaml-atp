@@ -87,7 +87,7 @@ let pdivide_pos vars sgns s p =
   let a = head vars p and (k,r) = pdivide vars s p in
   let sgn = findsign sgns a in
   if sgn = Zero then failwith "pdivide_pos: zero head coefficient"
-  else if sgn = Positive or k mod 2 = 0 then r
+  else if sgn = Positive || k mod 2 = 0 then r
   else if sgn = Negative then poly_neg r else poly_mul vars a r;;
 
 (* ------------------------------------------------------------------------- *)

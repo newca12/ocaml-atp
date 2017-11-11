@@ -63,7 +63,7 @@ module type Proofsystem =
 (* ------------------------------------------------------------------------- *)
 
 let rec occurs_in s t =
-  s = t or
+  s = t ||
   match t with
     Var y -> false
   | Fn(f,args) -> exists (occurs_in s) args;;
@@ -73,8 +73,8 @@ let rec free_in t fm =
     False|True -> false
   | Atom(R(p,args)) -> exists (occurs_in t) args
   | Not(p) -> free_in t p
-  | And(p,q)|Or(p,q)|Imp(p,q)|Iff(p,q) -> free_in t p or free_in t q
-  | Forall(y,p)|Exists(y,p) -> not(occurs_in (Var y) t) & free_in t p;;
+  | And(p,q)|Or(p,q)|Imp(p,q)|Iff(p,q) -> free_in t p || free_in t q
+  | Forall(y,p)|Exists(y,p) -> not(occurs_in (Var y) t) && free_in t p;;
 
 (* ------------------------------------------------------------------------- *)
 (* Implementation of the abstract data type of theorems.                     *)

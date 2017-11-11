@@ -177,7 +177,7 @@ let stal_intersect (eq1,_ as erf1) (eq2,_ as erf2) erf =
 
 let rec saturate n erf assigs allvars =
   let (eqv',_ as erf') = zero_saturate_and_check erf assigs in
-  if n = 0 or truefalse eqv' then erf' else
+  if n = 0 || truefalse eqv' then erf' else
   let (eqv'',_ as erf'') = splits n erf' allvars allvars in
   if eqv'' = eqv' then erf'' else saturate n erf'' [] allvars
 
@@ -200,7 +200,7 @@ let rec saturate_upto vars n m trigs assigs =
    (print_string("*** Starting "^(string_of_int n)^"-saturation");
     print_newline();
     let (eqv,_) = saturate n (unequal,relevance trigs) assigs vars in
-    truefalse eqv or saturate_upto vars (n + 1) m trigs assigs);;
+    truefalse eqv || saturate_upto vars (n + 1) m trigs assigs);;
 
 (* ------------------------------------------------------------------------- *)
 (* Overall function.                                                         *)
