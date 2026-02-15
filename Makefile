@@ -27,17 +27,17 @@ interactive: atp_interactive.ml init.ml; echo '#use "init.ml";;' >.ocamlinit; (s
 
 # Build a bytecode executable
 
-bytecode: example.ml atp_batch.cmo; ocamlc -pp "camlp5o ./Quotexpander.cmo" -o example nums.cma atp_batch.cmo example.ml;
+bytecode: example.ml atp_batch.cmo; ocamlfind ocamlc -package num -pp "camlp5o ./Quotexpander.cmo" -linkpkg -o example atp_batch.cmo example.ml;
 
 # Alternatively, produce native code
 
-compiled: example.ml atp_batch.cmx; ocamlopt -pp "camlp5o ./Quotexpander.cmo" -o example nums.cmxa atp_batch.cmx example.ml;
+compiled: example.ml atp_batch.cmx; ocamlfind ocamlopt -package num -pp "camlp5o ./Quotexpander.cmo" -linkpkg -o example atp_batch.cmx example.ml;
 
 # Make the appropriate object for the main body of code
 
-atp_batch.cmx: Quotexpander.cmo atp_batch.ml; ocamlopt -pp "camlp5o ./Quotexpander.cmo" -w ax -c atp_batch.ml;
+atp_batch.cmx: Quotexpander.cmo atp_batch.ml; ocamlfind ocamlopt -package num -pp "camlp5o ./Quotexpander.cmo" -w -a-x -c atp_batch.ml;
 
-atp_batch.cmo: Quotexpander.cmo atp_batch.ml; ocamlc -pp "camlp5o ./Quotexpander.cmo" -w ax -c atp_batch.ml;
+atp_batch.cmo: Quotexpander.cmo atp_batch.ml; ocamlfind ocamlc -package num -pp "camlp5o ./Quotexpander.cmo" -w -a-x -c atp_batch.ml;
 
 # Make the camlp4 or camlp5 quotation expander
 

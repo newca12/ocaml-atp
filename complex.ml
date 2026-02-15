@@ -187,7 +187,7 @@ let assertsign sgns (p,s) =
 let split_zero sgns pol cont_z cont_n =
   try let z = findsign sgns pol in
       (if z = Zero then cont_z else cont_n) sgns
-  with Failure "findsign" ->
+  with Failure s when s = "findsign" ->
       let eq = Atom(R("=",[pol; zero])) in
       Or(And(eq,cont_z (assertsign sgns (pol,Zero))),
          And(Not eq,cont_n (assertsign sgns (pol,Nonzero))));;
@@ -219,7 +219,7 @@ let rec cqelim vars (eqs,neqs) sgns =
      (try let sgns' = assertsign sgns (c,Zero)
           and eqs' = subtract eqs [c] in
           And(mk_eq c zero,cqelim vars (eqs',neqs) sgns')
-      with Failure "assertsign" -> False)
+      with Failure s when s = "assertsign" -> False)
   with Failure _ ->
      if eqs = [] then list_conj(map (poly_nonzero vars sgns) neqs) else
      let n = end_itlist min (map (degree vars) eqs) in

@@ -1,7 +1,12 @@
 ### About ###
 Objective Caml code supporting John Harrison's logic [textbook](http://www.cambridge.org/9780521899574) Handbook of Practical Logic and Automated Reasoning.  
 The [original code](https://www.cl.cam.ac.uk/~jrh13/atp) work with OCaml 3.x.  
-This repo contains sligth modifications and instructions to fit OCaml 4.10.0.
+This repo contains slight modifications and instructions to fit OCaml 5.3.0.
+
+### prerequities ###
+
+`opam switch create ocaml.5.3.0 ocaml-base-compiler.5.3.0`
+`eval $(opam env --switch=ocaml.5.3.0)`
 
 ### num ###
 
@@ -11,11 +16,11 @@ You need to : `opam install num`
 
 ### camlp5
 
-This code is not yet compatible with camlp5 8.x
+You need to : `opam install camlp5`
 
-You need to : `opam install camlp5.7.14`
+### Build & run ###
 
-### Notes ###
+You need to : `opam install ocamlfind`
 
 `make` drive you to interactive interpreted mode
 

@@ -8,7 +8,7 @@
 
 #use "topfind";;
 
-#load "nums.cma";;
+#require "num";;
 
 #require "camlp5";;
 #load "camlp5o.cma";;

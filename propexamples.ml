@@ -12,7 +12,7 @@ let ramsey s t n =
   let vertices = 1 -- n in
   let yesgrps = map (allsets 2) (allsets s vertices)
   and nogrps = map (allsets 2) (allsets t vertices) in
-  let e[m;n] = Atom(P("p_"^(string_of_int m)^"_"^(string_of_int n))) in
+  let e = function [m;n] -> Atom(P("p_"^(string_of_int m)^"_"^(string_of_int n))) | _ -> failwith "e: bad args" in
   Or(list_disj (map (list_conj ** map e) yesgrps),
      list_disj (map (list_conj ** map (fun p -> Not(e p))) nogrps));;
 

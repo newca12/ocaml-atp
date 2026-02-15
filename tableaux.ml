@@ -135,7 +135,7 @@ let rec deepen f n =
   with Failure _ -> deepen f (n + 1);;
 
 let tabrefute fms =
-  deepen (fun n -> tableau (fms,[],n) (fun x -> x) (undefined,0); n) 0;;
+  deepen (fun n -> ignore(tableau (fms,[],n) (fun x -> x) (undefined,0)); n) 0;;
 
 let tab fm =
   let sfm = askolemize(Not(generalize fm)) in

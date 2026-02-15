@@ -63,11 +63,11 @@ let trigger =
   let [trig_and; trig_or; trig_imp; trig_iff] = map triggers
       [<<p <=> q /\ r>>; <<p <=> q \/ r>>;
        <<p <=> (q ==> r)>>; <<p <=> (q <=> r)>>]
-  and p = <<p>> and q = <<q>> and r = <<r>>
+  and _p = <<p>> and _q = <<q>> and _r = <<r>>
   and ddnegate fm = match fm with Not(Not p) -> p | _ -> fm in
-  let inst_fn [x;y;z] =
+  let inst_fn = function [x;y;z] ->
     let subfn = fpf [P"p"; P"q"; P"r"] [x; y; z] in
-    ddnegate ** psubst subfn in
+    ddnegate ** psubst subfn | _ -> failwith "inst_fn: bad args" in
   let inst2_fn i (p,q) = align(inst_fn i p,inst_fn i q) in
   let instn_fn i (a,c) = inst2_fn i a,map (inst2_fn i) c in
   let inst_trigger = map ** instn_fn in

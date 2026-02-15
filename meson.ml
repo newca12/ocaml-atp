@@ -53,7 +53,7 @@ let puremeson fm =
   let cls = simpcnf(specialize(pnf fm)) in
   let rules = itlist ((@) ** contrapositives) cls [] in
   deepen (fun n ->
-     mexpand rules [] False (fun x -> x) (undefined,n,0); n) 0;;
+     ignore(mexpand rules [] False (fun x -> x) (undefined,n,0)); n) 0;;
 
 let meson fm =
   let fm1 = askolemize(Not(generalize fm)) in
@@ -111,7 +111,7 @@ let puremeson fm =
   let cls = simpcnf(specialize(pnf fm)) in
   let rules = itlist ((@) ** contrapositives) cls [] in
   deepen (fun n ->
-     mexpand rules [] False (fun x -> x) (undefined,n,0); n) 0;;
+     ignore(mexpand rules [] False (fun x -> x) (undefined,n,0)); n) 0;;
 
 let meson fm =
   let fm1 = askolemize(Not(generalize fm)) in

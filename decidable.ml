@@ -270,7 +270,7 @@ let limited_meson n fm =
 
 let decide_fmp fm =
   let rec test n =
-    try limited_meson n fm; true with Failure _ ->
+    try ignore(limited_meson n fm); true with Failure _ ->
     if decide_finite n fm then test (n + 1) else false in
   test 1;;
 

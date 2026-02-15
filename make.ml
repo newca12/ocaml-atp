@@ -6,7 +6,7 @@
 
 #warnings "-8";;    (* Suppress deprecation warnings due to old-style code. *)
 #use "topfind";;
-#load "nums.cma";;                                     (* For Ocaml 3.06     *)
+#require "num";;
 #require "camlp5";;
 #load "camlp5o.cma";;
 
